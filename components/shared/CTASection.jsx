@@ -10,15 +10,27 @@ export default function CTASection({
   title = 'Prêt à simplifier votre comptabilité ?',
   subtitle = 'Contactez-nous dès aujourd\'hui pour un accompagnement sur-mesure',
   showPhone = true,
-  backgroundColor = 'primary.main',
 }) {
   return (
     <Box
       sx={{
-        backgroundColor,
+        backgroundImage: 'url(/images/CTA-banner.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         py: { xs: 8, md: 12 },
         position: 'relative',
         overflow: 'hidden',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          zIndex: 0,
+        },
       }}
     >
       {/* Decorative elements */}

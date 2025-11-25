@@ -124,7 +124,7 @@ export default function DetailedHours() {
                       <strong>Par téléphone :</strong> 01 34 04 35 05 (du lundi au vendredi)
                     </Typography>
                     <Typography component="li" variant="body2" sx={{ mb: 1.5, lineHeight: 1.7 }}>
-                      <strong>Par email :</strong> ecifec95@gmail.com
+                      <strong>Par email :</strong> expert-comptable@ecifec95.com
                     </Typography>
                     <Typography component="li" variant="body2" sx={{ mb: 1.5, lineHeight: 1.7 }}>
                       <strong>Via le formulaire</strong> de contact en haut de cette page

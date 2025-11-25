@@ -180,7 +180,7 @@ export default function ConfidentialityCommitment() {
             >
               <Typography variant="body2" sx={{ color: 'white', opacity: 0.9, lineHeight: 1.7 }}>
                 Pour toute question concernant le traitement de vos données personnelles ou pour exercer vos droits (accès, rectification, suppression), contactez-nous à{' '}
-                <strong>ecifec95@gmail.com</strong>
+                <strong>expert-comptable@ecifec95.com</strong>
               </Typography>
             </Box>
           </Paper>

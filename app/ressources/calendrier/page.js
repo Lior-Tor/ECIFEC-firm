@@ -553,7 +553,7 @@ export default function CalendrierPage() {
                 📞 CABINET ECIFEC - Votre partenaire comptable de confiance
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.9 }}>
-                3 Bd Albert Camus, 95200 Sarcelles | 01 34 04 35 05 | ecifec95@gmail.com
+                3 Bd Albert Camus, 95200 Sarcelles | 01 34 04 35 05 | expert-comptable@ecifec95.com
               </Typography>
             </Box>
           </FadeInSection>

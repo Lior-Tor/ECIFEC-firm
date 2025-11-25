@@ -438,7 +438,7 @@ export default function FAQPage() {
                     <EmailIcon sx={{ color: 'secondary.main' }} />
                   </ListItemIcon>
                   <ListItemText
-                    primary="ecifec95@gmail.com"
+                    primary="expert-comptable@ecifec95.com"
                     primaryTypographyProps={{
                       fontWeight: 600,
                       color: 'primary.main',
