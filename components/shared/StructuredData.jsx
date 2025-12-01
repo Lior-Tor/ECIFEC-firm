@@ -2,7 +2,21 @@
 import { CABINET_INFO } from '@/lib/data/navigation';
 
 export default function StructuredData() {
-  const structuredData = {
+  // WebSite schema for site name in Google results
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://ecifec.com/#website',
+    url: 'https://ecifec.com',
+    name: 'Cabinet ECIFEC',
+    description: "Cabinet d'expertise comptable ECIFEC à Sarcelles",
+    publisher: {
+      '@id': 'https://ecifec.com/#organization',
+    },
+  };
+
+  // Organization/AccountingService schema
+  const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'AccountingService',
     '@id': 'https://ecifec.com/#organization',
@@ -162,9 +176,15 @@ export default function StructuredData() {
   };
 
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+    </>
   );
 }
