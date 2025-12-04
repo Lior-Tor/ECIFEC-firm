@@ -188,9 +188,10 @@ npm run dev
 ## Security Features
 
 ### CSRF Protection
-- Middleware generates httpOnly CSRF tokens in cookies
+- Middleware generates unique CSRF tokens stored in secure cookies
 - All POST requests to `/api/contact` require valid CSRF token in `X-CSRF-Token` header
 - Token validation prevents Cross-Site Request Forgery attacks
+- Cookies use SameSite=Strict and Secure flags in production
 
 ### Content Security Policy (CSP)
 Strict CSP headers configured in [next.config.js](next.config.js):

@@ -10,7 +10,7 @@ Endpoint sécurisé pour l'envoi de formulaires de contact via EmailJS.
 
 - **CSRF Protection** : Obligatoire
   - Token CSRF requis dans le header `X-CSRF-Token`
-  - Le token est généré automatiquement par le middleware et stocké dans un cookie httpOnly
+  - Le token est généré automatiquement par le middleware et stocké dans un cookie (accessible JavaScript pour lecture)
 
 - **Rate Limiting** :
   - Client-side : 1 requête par minute (localStorage)

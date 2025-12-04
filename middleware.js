@@ -9,7 +9,7 @@ export function middleware(request) {
   if (!csrfToken) {
     const newToken = crypto.randomUUID();
     response.cookies.set('csrf-token', newToken, {
-      httpOnly: true,
+      httpOnly: false,  // CSRF tokens must be readable by JavaScript
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/',
