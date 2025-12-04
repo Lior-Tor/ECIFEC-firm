@@ -42,7 +42,7 @@ export default function StatsSection() {
                       }}
                     >
                       <Image
-                        src="/images/oec.webp"
+                        src="/images/oec.png"
                         alt="Ordre des Experts-Comptables"
                         width={140}
                         height={140}

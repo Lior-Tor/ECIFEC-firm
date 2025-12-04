@@ -24,8 +24,8 @@ A modern, professional showcase website for Cabinet ECIFEC, an accounting firm b
 ## Tech Stack
 
 ### Framework & Core
-- **Next.js 15** - React framework with App Router
-- **React 19** - UI library
+- **Next.js 15.5.7** - React framework with App Router (CVE-2025-55182 patched)
+- **React 19.2.1** - UI library (security updated)
 - **JavaScript (ES6+)** - Modern JavaScript without TypeScript
 
 ### UI & Styling
@@ -33,27 +33,43 @@ A modern, professional showcase website for Cabinet ECIFEC, an accounting firm b
   - `@mui/material` - UI components
   - `@mui/icons-material` - Integrated icon library
   - `@emotion/react` & `@emotion/styled` - CSS-in-JS dependencies
-- **Custom Theme** - Brand
+- **Custom Theme** - Brand colors and typography
 - **CSS-in-JS** - Styling with sx prop and emotion
 - **Custom Components** - WaveDivider, ScrollProgress, enhanced cards
+- **WebP Images** - All images optimized in WebP format with lazy loading
 
 ### Forms & Validation
-- **React Hook Form** - Form state management
-- **Zod** - Schema validation
-- **EmailJS** - Email service integration
+- **React Hook Form 7.68.0** - Form state management
+- **Zod 3.23.8** - Schema validation
+- **@emailjs/nodejs 5.0.2** - Server-side email service (secure API)
+- **isomorphic-dompurify 2.33.0** - XSS sanitization
+
+### Security
+- **CSRF Protection** - httpOnly cookies with token validation
+- **Content Security Policy (CSP)** - Strict security headers
+- **Server-Side API** - EmailJS credentials never exposed to client
+- **Rate Limiting** - Client-side (1 req/min) and server-side IP tracking
+- **Input Sanitization** - DOMPurify + Zod validation
+
+### Analytics & Monitoring
+- **@vercel/analytics 1.6.1** - User analytics
+- **@vercel/speed-insights 1.3.1** - Performance monitoring
 
 ### Development & Deployment
 - **Vercel** - Hosting and continuous deployment
 - **ESLint** - Code linting
-- **Git** - Version control
+- **Git** - Version control with .gitattributes for line endings
 
 ## Project Structure
 
 ```
 ECIFEC/
 ├── app/                              # Next.js App Router pages
-│   ├── layout.js                     # Root layout (Header, Footer, ScrollProgress)
+│   ├── layout.js                     # Root layout (Header, Footer, Analytics, Speed Insights)
 │   ├── page.js                       # Home page
+│   ├── api/
+│   │   ├── contact/route.js          # Secure server-side email API (CSRF protected)
+│   │   └── README.md                 # API documentation
 │   ├── services/page.js              # Detailed services with accordion
 │   ├── pourquoi-nous-choisir/page.js # Why choose us page
 │   ├── equipe/page.js                # Team presentation
@@ -65,7 +81,11 @@ ECIFEC/
 │   │   ├── calendrier/page.js        # Tax calendar
 │   │   └── simulateurs/page.js       # URSSAF simulators
 │   ├── mentions-legales/page.js      # Legal notices
-│   └── politique-confidentialite/page.js # Privacy policy
+│   ├── politique-confidentialite/page.js # Privacy policy
+│   ├── error.js                      # Error boundary
+│   ├── not-found.js                  # 404 page
+│   ├── robots.js                     # Dynamic robots.txt
+│   └── sitemap.js                    # Dynamic sitemap
 ├── components/
 │   ├── layout/
 │   │   ├── Header.jsx                # Main navigation
@@ -100,16 +120,20 @@ ECIFEC/
 │   │   ├── services.js               # Services data
 │   │   ├── secteurs.js               # Sectors data
 │   │   ├── faq.js                    # FAQ data
-│   │   └── team.js                   # Team data
-│   └── constants.js                  # Application constants
+│   │   ├── team.js                   # Team data
+│   │   └── navigation.js             # Navigation menu data
+│   └── metadata.js                   # SEO metadata helpers
 ├── styles/
 │   └── globals.css                   # Global CSS styles
 ├── public/
-│   ├── images/                       # Images and logos
+│   ├── images/                       # WebP optimized images and logos
 │   └── favicon.ico                   # Favicon
+├── middleware.js                     # CSRF token generation middleware
 ├── package.json
-├── next.config.js                    # Next.js configuration
+├── next.config.js                    # Next.js configuration (CSP headers)
 ├── jsconfig.json                     # JavaScript configuration
+├── .gitattributes                    # Git line ending configuration
+├── .env.example                      # Environment variables template
 └── README.md                         # This file
 ```
 
@@ -134,11 +158,18 @@ npm install
 
 3. Create environment variables file:
 ```bash
-# Create .env.local file with:
-NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_service_id
-NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_template_id
-NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=your_public_key
+# Create .env.local file with (see .env.example):
+NEXT_PUBLIC_SITE_URL=https://ecifec.com
+
+# EmailJS - Server-side only (DO NOT use NEXT_PUBLIC_ prefix)
+EMAILJS_SERVICE_ID=your_service_id
+EMAILJS_TEMPLATE_ID=your_template_id
+EMAILJS_PUBLIC_KEY=your_public_key
+EMAILJS_PRIVATE_KEY=your_private_key
+EMAILJS_AUTORESPONSE_TEMPLATE_ID=your_autoresponse_template_id
 ```
+
+**Important:** EmailJS credentials are server-side only for security. Never expose them with `NEXT_PUBLIC_` prefix.
 
 4. Run the development server:
 ```bash
@@ -153,6 +184,31 @@ npm run dev
 - `npm run build` - Create production build
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint for code quality
+
+## Security Features
+
+### CSRF Protection
+- Middleware generates httpOnly CSRF tokens in cookies
+- All POST requests to `/api/contact` require valid CSRF token in `X-CSRF-Token` header
+- Token validation prevents Cross-Site Request Forgery attacks
+
+### Content Security Policy (CSP)
+Strict CSP headers configured in [next.config.js](next.config.js):
+- Restricts script sources to self, EmailJS CDN, and Vercel Analytics
+- Blocks inline scripts except with nonce or marked as safe
+- Prevents XSS attacks and code injection
+
+### Server-Side Email API
+- EmailJS credentials stored server-side only (never exposed to client)
+- Secure API endpoint at `/api/contact` with validation
+- Rate limiting: 1 request per minute per IP
+- Input sanitization with DOMPurify and Zod schema validation
+
+### Data Protection
+- GDPR-compliant contact form with explicit consent
+- Privacy policy page
+- No third-party tracking except Vercel Analytics
+- User IP logged for security purposes only
 
 ## Key Components
 
@@ -221,12 +277,23 @@ Located in [lib/theme/sectionStyles.js](lib/theme/sectionStyles.js):
 
 1. Push code to GitHub repository
 2. Import project in [Vercel](https://vercel.com)
-3. Configure environment variables in Vercel dashboard
+3. Configure environment variables in Vercel dashboard:
+   - `NEXT_PUBLIC_SITE_URL=https://ecifec.com`
+   - `EMAILJS_SERVICE_ID=your_service_id`
+   - `EMAILJS_TEMPLATE_ID=your_template_id`
+   - `EMAILJS_PUBLIC_KEY=your_public_key`
+   - `EMAILJS_PRIVATE_KEY=your_private_key`
+   - `EMAILJS_AUTORESPONSE_TEMPLATE_ID=your_autoresponse_template_id`
 4. Deploy automatically on every push to main branch
 
 ### Custom Domain
-- Configure custom domain in Vercel settings
+- Custom domain: **ecifec.com**
+- Configured in Vercel settings
 - Automatic HTTPS with Let's Encrypt
+
+### Environment Variables
+See [.env.example](.env.example) for complete list and descriptions.
+For API documentation, see [app/api/README.md](app/api/README.md).
 
 ## Browser Support
 
@@ -248,8 +315,15 @@ Proprietary - All rights reserved to Cabinet ECIFEC (client/owner)
 
 **Cabinet ECIFEC**
 Sarcelles, France
-Website: [Coming Soon]
+Website: [https://ecifec.com](https://ecifec.com)
 
 ---
 
-Built with ❤️ using Next.js and Material-UI
+## Security Updates
+
+- **2024-12** - Patched CVE-2025-55182 (React Server Components vulnerability)
+- **2024-12** - Implemented CSRF protection and CSP headers
+- **2024-12** - Migrated EmailJS to secure server-side API
+- **2024-12** - Added XSS sanitization with DOMPurify
+
+Built with Next.js 15 and Material-UI v6
