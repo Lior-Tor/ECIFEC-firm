@@ -1,8 +1,39 @@
+/**
+ * Structured Data (Schema.org JSON-LD) pour SEO
+ *
+ * POURQUOI structured data est important:
+ * - Aide Google à comprendre le contenu du site (meilleur référencement)
+ * - Active les rich snippets (résultats enrichis dans Google)
+ * - Améliore appearance dans Google Maps / Google Business
+ * - Éligible pour Knowledge Panel Google
+ *
+ * SCHEMAS IMPLÉMENTÉS:
+ * 1. WebSite: Informations générales sur le site
+ * 2. AccountingService (Organization): Détails sur le cabinet d'expertise comptable
+ *    - Coordonnées (adresse, téléphone, email)
+ *    - Horaires d'ouverture
+ *    - Zone de service (Sarcelles, Val-d'Oise, Île-de-France)
+ *    - Catalogue de services
+ *    - Secteurs d'expertise
+ *    - Appartenance à l'Ordre des Experts-Comptables
+ *
+ * FORMAT: JSON-LD (JavaScript Object Notation for Linked Data)
+ * - Recommandé par Google (plus simple que Microdata ou RDFa)
+ * - Inséré dans <script type="application/ld+json">
+ * - Validable via Google Rich Results Test
+ *
+ * RÉFÉRENCE:
+ * - https://schema.org/AccountingService
+ * - https://developers.google.com/search/docs/appearance/structured-data
+ *
+ * @component
+ */
+
 'use client';
 import { CABINET_INFO } from '@/lib/data/navigation';
 
 export default function StructuredData() {
-  // WebSite schema for site name in Google results
+  // Schema WebSite: informations de base pour affichage dans les résultats Google
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -15,7 +46,7 @@ export default function StructuredData() {
     },
   };
 
-  // Organization/AccountingService schema
+  // Schema AccountingService: détails complets sur le cabinet (rich snippets Google)
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'AccountingService',

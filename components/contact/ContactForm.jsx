@@ -1,3 +1,21 @@
+/**
+ * Formulaire de contact sécurisé avec validation Zod et protection XSS
+ *
+ * ARCHITECTURE DE SÉCURITÉ:
+ * - Validation client: react-hook-form + Zod (UX rapide, empêche soumissions invalides)
+ * - Sanitization XSS: DOMPurify avant envoi (empêche injection de scripts)
+ * - CSRF: Token envoyé dans headers (protège contre requêtes cross-site)
+ * - Rate Limiting: Géré côté serveur (5 req/heure/IP)
+ *
+ * FLUX UTILISATEUR:
+ * 1. Remplir formulaire → Validation temps réel (Zod)
+ * 2. Soumettre → Sanitization (DOMPurify) → Envoi API + CSRF token
+ * 3. Succès → Redirection /contact/confirmation
+ * 4. Erreur → Snackbar avec message d'erreur adapté
+ *
+ * @component
+ */
+
 'use client';
 import { useState } from 'react';
 import {
@@ -23,6 +41,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import DOMPurify from 'isomorphic-dompurify';
 
+/**
+ * Schéma de validation Zod pour le formulaire de contact
+ *
+ * POURQUOI Zod plutôt que validation manuelle:
+ * - Type-safe: TypeScript peut inférer les types
+ * - Déclaratif: Plus lisible que des if/else
+ * - Réutilisable: Même schéma pour validation serveur (future possibilité)
+ * - Messages d'erreur personnalisés en français
+ */
 const contactSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
   email: z.string().email('Email invalide'),
@@ -60,33 +87,48 @@ export default function ContactForm() {
     },
   });
 
+  /**
+   * Gère la soumission du formulaire avec sanitization XSS et gestion d'erreurs
+   *
+   * SÉCURITÉ XSS - POURQUOI DOMPurify:
+   * - Empêche injection de <script>, <iframe>, événements onclick, etc.
+   * - ALLOWED_TAGS: [] = supprime TOUS les tags HTML (texte pur uniquement)
+   * - Défense en profondeur: même si serveur ne valide pas, client est protégé
+   *
+   * POURQUOI extraire CSRF token des cookies:
+   * - Token généré par middleware.js et stocké en cookie
+   * - Doit être renvoyé dans header X-CSRF-Token pour validation serveur
+   * - Empêche requêtes malveillantes depuis d'autres domaines
+   */
   const onSubmit = async (data) => {
     setIsSubmitting(true);
 
     try {
-      // Sanitizer les données pour éviter les injections HTML/XSS
+      // ÉTAPE 1: Sanitization XSS avec DOMPurify
+      // Supprime tout HTML/JavaScript malveillant des entrées utilisateur
       const sanitizedData = {
         name: DOMPurify.sanitize(data.name, { ALLOWED_TAGS: [] }),
         email: DOMPurify.sanitize(data.email, { ALLOWED_TAGS: [] }),
         phone: DOMPurify.sanitize(data.phone, { ALLOWED_TAGS: [] }),
-        requestType: data.requestType,
+        requestType: data.requestType, // Enum, pas besoin de sanitize
         sector: DOMPurify.sanitize(data.sector || '', { ALLOWED_TAGS: [] }),
         message: DOMPurify.sanitize(data.message, { ALLOWED_TAGS: [] }),
-        rgpd: data.rgpd,
+        rgpd: data.rgpd, // Boolean, pas besoin de sanitize
       };
 
-      // Get CSRF token from cookie
+      // ÉTAPE 2: Récupération du token CSRF depuis les cookies
+      // Format cookie: "csrf-token=uuid; other-cookie=value"
       const csrfToken = document.cookie
         .split('; ')
         .find(row => row.startsWith('csrf-token='))
         ?.split('=')[1];
 
-      // Envoyer la requête à l'API sécurisée
+      // ÉTAPE 3: Envoi de la requête POST à l'API
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken || '',
+          'X-CSRF-Token': csrfToken || '', // Token CSRF pour validation serveur
         },
         body: JSON.stringify(sanitizedData),
       });
@@ -94,8 +136,9 @@ export default function ContactForm() {
       const result = await response.json();
 
       if (!response.ok) {
-        // Gérer le rate limiting (429)
+        // GESTION SPÉCIFIQUE: Rate Limiting (HTTP 429)
         if (response.status === 429 && result.retryAfter) {
+          // Calcul du temps d'attente en format lisible
           const minutes = Math.ceil(result.retryAfter / 60);
           const seconds = result.retryAfter % 60;
           const timeMsg = minutes > 0
@@ -105,32 +148,42 @@ export default function ContactForm() {
           throw new Error(`Trop de tentatives. Veuillez patienter ${timeMsg} avant de réessayer.`);
         }
 
+        // Autres erreurs (400, 403, 500, etc.)
         throw new Error(result.error || result.message || 'Erreur lors de l\'envoi');
       }
 
-      // Rediriger vers la page de confirmation
+      // SUCCÈS: Redirection vers page de confirmation
       router.push('/contact/confirmation');
     } catch (error) {
+      // Logging console uniquement en développement (sécurité: ne pas exposer en prod)
       if (process.env.NODE_ENV === 'development') {
         console.error('Contact form error:', error);
       }
 
+      // Messages d'erreur adaptés selon le type d'erreur
       let errorMessage = 'Une erreur est survenue. Veuillez réessayer ou nous contacter par téléphone.';
 
+      // CSRF error: probablement cookie expiré ou manquant
       if (error.message.includes('CSRF') || error.message.includes('Invalid CSRF token')) {
         errorMessage = 'Erreur de sécurité. Veuillez rafraîchir la page et réessayer.';
-      } else if (error.message.includes('Trop de tentatives')) {
+      }
+      // Rate limiting: message déjà formaté avec temps d'attente
+      else if (error.message.includes('Trop de tentatives')) {
         errorMessage = error.message;
-      } else if (error.message) {
+      }
+      // Autres erreurs: utiliser le message du serveur s'il existe
+      else if (error.message) {
         errorMessage = error.message;
       }
 
+      // Affichage du Snackbar d'erreur
       setSnackbar({
         open: true,
         message: errorMessage,
         severity: 'error',
       });
     } finally {
+      // Toujours désactiver le loading state (succès ou erreur)
       setIsSubmitting(false);
     }
   };

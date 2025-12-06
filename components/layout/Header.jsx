@@ -1,3 +1,30 @@
+/**
+ * Header / Navigation principale du site ECIFEC
+ *
+ * FONCTIONNALITÉS:
+ * - Navigation responsive (desktop: menus déroulants, mobile: drawer)
+ * - AppBar qui change de style au scroll (élévation + background)
+ * - Menus déroulants pour Services et Secteurs (mega menu desktop)
+ * - Drawer mobile avec accordéons pour sous-menus
+ * - Logo cliquable (retour accueil)
+ * - Bouton CTA "Nous contacter" avec icône téléphone
+ *
+ * RESPONSIVE:
+ * - Desktop (≥md): Navigation horizontale + dropdown menus
+ * - Mobile (<md): Hamburger menu + drawer latéral
+ *
+ * DONNÉES:
+ * - Navigation structure importée de lib/data/navigation.js
+ * - Icônes mappées dynamiquement via iconMap
+ *
+ * OPTIMISATIONS:
+ * - useScrollTrigger pour détecter scroll (Material-UI)
+ * - useMediaQuery pour responsive sans re-render inutiles
+ * - Next.js Link pour navigation côté client (pas de rechargement page)
+ *
+ * @component
+ */
+
 'use client';
 import { useState } from 'react';
 import {
@@ -50,7 +77,14 @@ import PrecisionManufacturing from '@mui/icons-material/PrecisionManufacturing';
 import LocalShipping from '@mui/icons-material/LocalShipping';
 import AccountTree from '@mui/icons-material/AccountTree';
 
-// Map d'icônes pour le rendu dynamique
+/**
+ * Map d'icônes Material-UI pour rendu dynamique
+ *
+ * POURQUOI une map plutôt que import conditionnel:
+ * - Les données navigation contiennent des strings d'icônes ("Business", "Receipt", etc.)
+ * - On ne peut pas faire import dynamique de composants React
+ * - Solution: map statique qui convertit string → composant Icon
+ */
 const iconMap = {
   Business,
   Receipt,
