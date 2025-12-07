@@ -41,7 +41,7 @@ import {
   Info,
 } from '@mui/icons-material';
 import Link from 'next/link';
-import Image from 'next/image';
+import ImageZoom from '@/components/shared/ImageZoom';
 import { factureElectroniqueMetadata } from '@/lib/metadata';
 
 export const metadata = factureElectroniqueMetadata;
@@ -395,22 +395,17 @@ export default function FactureElectroniquePage() {
       <Paper elevation={2} sx={{ p: 4, mb: 6, bgcolor: 'white' }}>
         <Typography variant="h3" gutterBottom sx={{ mb: 1, textAlign: 'center' }}>
           Circuit de transmission des{' '}
-          <Box component="span" sx={{ color: '#ff6b35' }}>
+          <Box component="span" sx={{ color: '#C7B376' }}>
             factures et des données
           </Box>
         </Typography>
 
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-          <Image
+          <ImageZoom
             src="/images/schema-facture_electronique.webp"
             alt="Circuit de transmission des factures et des données - Schéma explicatif de la facturation électronique B2B"
             width={1200}
             height={800}
-            style={{
-              maxWidth: '100%',
-              height: 'auto',
-              borderRadius: '8px',
-            }}
             priority
           />
         </Box>
