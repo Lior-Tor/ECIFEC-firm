@@ -39,6 +39,7 @@ import {
   Cancel,
   CheckCircleOutline,
   Info,
+  PlayCircleOutline,
 } from '@mui/icons-material';
 import Link from 'next/link';
 import ImageZoom from '@/components/shared/ImageZoom';
@@ -692,6 +693,29 @@ export default function FactureElectroniquePage() {
           >
             Demander un accompagnement
           </Button>
+        </Box>
+      </Paper>
+
+      {/* Vidéo Explicative */}
+      <Paper elevation={2} sx={{ p: 4, mb: 6 }}>
+        <Typography variant="h3" gutterBottom sx={{ mb: 4, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+          <PlayCircleOutline color="primary" sx={{ fontSize: 40 }} />
+          La Réforme en Vidéo
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Box
+            component="video"
+            controls
+            src="/videos/facture_electronique.mp4"
+            sx={{
+              width: '100%',
+              maxWidth: '900px',
+              borderRadius: 2,
+              boxShadow: 3,
+            }}
+          >
+            Votre navigateur ne supporte pas la lecture de vidéos.
+          </Box>
         </Box>
       </Paper>
 
