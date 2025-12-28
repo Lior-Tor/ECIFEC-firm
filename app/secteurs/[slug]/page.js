@@ -309,22 +309,22 @@ export default async function SectorPage({ params }) {
               </Typography>
 
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  component={Link}
-                  href="/secteurs/autres"
-                  variant="contained"
-                  color="secondary"
-                  size="large"
-                  endIcon={<ArrowForwardIcon />}
-                  sx={{
-                    px: 4,
-                    py: 1.5,
-                    fontSize: '1rem',
-                    borderRadius: 50,
-                  }}
-                >
-                  En savoir plus
-                </Button>
+                <Link href="/secteurs/autres" style={{ textDecoration: 'none' }}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="large"
+                    endIcon={<ArrowForwardIcon />}
+                    sx={{
+                      px: 4,
+                      py: 1.5,
+                      fontSize: '1rem',
+                      borderRadius: 50,
+                    }}
+                  >
+                    En savoir plus
+                  </Button>
+                </Link>
               </Box>
             </Paper>
           </FadeInSection>

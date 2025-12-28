@@ -79,11 +79,21 @@ const nextConfig = {
   /**
    * Force HTTPS en production pour éviter man-in-the-middle
    * Redirection 301 permanente basée sur x-forwarded-proto header
+   * Redirection www → non-www pour éviter duplicate content
+   * Redirection pages obsolètes
    */
   async redirects() {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ecifec.com';
-    return process.env.NODE_ENV === 'production'
+
+    // Redirections permanentes (production et développement)
+    const permanentRedirects = [
+      // Aucune redirection permanente pour le moment
+    ];
+
+    // Redirections spécifiques à la production
+    const productionRedirects = process.env.NODE_ENV === 'production'
       ? [
+          // HTTP → HTTPS redirect
           {
             source: '/:path*',
             has: [
@@ -96,8 +106,22 @@ const nextConfig = {
             destination: `${siteUrl}/:path*`,
             permanent: true, // HTTP 301
           },
+          // www → non-www redirect
+          {
+            source: '/:path*',
+            has: [
+              {
+                type: 'host',
+                value: 'www.ecifec.com',
+              },
+            ],
+            destination: 'https://ecifec.com/:path*',
+            permanent: true, // HTTP 301
+          },
         ]
       : [];
+
+    return [...permanentRedirects, ...productionRedirects];
   },
 }
 

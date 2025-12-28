@@ -100,22 +100,22 @@ export default function CTASection({
                 flexWrap: 'wrap',
               }}
             >
-            <Button
-              component={Link}
-              href="/contact"
-              variant="contained"
-              color="secondary"
-              size="large"
-              endIcon={<ArrowForwardIcon />}
-              sx={{
-                px: 4,
-                py: 1.5,
-                fontSize: '1.1rem',
-                borderRadius: 50,
-              }}
-            >
-              Demander un devis
-            </Button>
+            <Link href="/contact" style={{ textDecoration: 'none' }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                endIcon={<ArrowForwardIcon />}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  borderRadius: 50,
+                }}
+              >
+                Demander un devis
+              </Button>
+            </Link>
             {showPhone && (
               <Button
                 href={`tel:${CABINET_INFO.contact.phone.replace(/\s/g, '')}`}

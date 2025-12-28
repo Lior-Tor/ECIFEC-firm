@@ -678,21 +678,21 @@ export default function FactureElectroniquePage() {
         </Box>
 
         <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Button
-            component={Link}
-            href="/contact"
-            variant="contained"
-            size="large"
-            sx={{
-              bgcolor: 'white',
-              color: 'primary.main',
-              '&:hover': { bgcolor: 'grey.100' },
-              px: 4,
-              py: 1.5,
-            }}
-          >
-            Demander un accompagnement
-          </Button>
+          <Link href="/contact" style={{ textDecoration: 'none' }}>
+            <Button
+              variant="contained"
+              size="large"
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                '&:hover': { bgcolor: 'grey.100' },
+                px: 4,
+                py: 1.5,
+              }}
+            >
+              Demander un accompagnement
+            </Button>
+          </Link>
         </Box>
       </Paper>
 
@@ -836,24 +836,24 @@ export default function FactureElectroniquePage() {
           ECIFEC vous accompagne dans votre mise en conformité avec une approche personnalisée et des conseils experts.
         </Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mt: 3 }}>
-          <Button
-            component={Link}
-            href="/contact"
-            variant="contained"
-            color="primary"
-            size="large"
-          >
-            Prendre rendez-vous
-          </Button>
-          <Button
-            component={Link}
-            href="/ressources"
-            variant="outlined"
-            color="primary"
-            size="large"
-          >
-            Autres ressources
-          </Button>
+          <Link href="/contact" style={{ textDecoration: 'none' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+            >
+              Prendre rendez-vous
+            </Button>
+          </Link>
+          <Link href="/ressources" style={{ textDecoration: 'none' }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="large"
+            >
+              Autres ressources
+            </Button>
+          </Link>
         </Stack>
       </Paper>
       </Container>
