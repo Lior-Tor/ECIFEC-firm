@@ -83,45 +83,16 @@ const nextConfig = {
    * Redirection pages obsolètes
    */
   async redirects() {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ecifec.com';
-
     // Redirections permanentes (production et développement)
     const permanentRedirects = [
       // Aucune redirection permanente pour le moment
     ];
 
-    // Redirections spécifiques à la production
-    const productionRedirects = process.env.NODE_ENV === 'production'
-      ? [
-          // HTTP → HTTPS redirect
-          {
-            source: '/:path*',
-            has: [
-              {
-                type: 'header',
-                key: 'x-forwarded-proto',
-                value: 'http',
-              },
-            ],
-            destination: `${siteUrl}/:path*`,
-            permanent: true, // HTTP 301
-          },
-          // www → non-www redirect
-          {
-            source: '/:path*',
-            has: [
-              {
-                type: 'host',
-                value: 'www.ecifec.com',
-              },
-            ],
-            destination: 'https://ecifec.com/:path*',
-            permanent: true, // HTTP 301
-          },
-        ]
-      : [];
+    // NOTE: Les redirections HTTP → HTTPS et www → non-www sont gérées automatiquement
+    // par Vercel dans les paramètres de domaine pour éviter les boucles de redirection.
+    // Configuration: Vercel Dashboard → Settings → Domains → Redirect www to non-www
 
-    return [...permanentRedirects, ...productionRedirects];
+    return permanentRedirects;
   },
 }
 
